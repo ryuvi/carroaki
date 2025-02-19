@@ -1,50 +1,3 @@
-<?php
-include('db.php');
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $modelo = $_POST['modelo'];
-    $preco = $_POST['preco'];
-    $ano = $_POST['ano'];
-    $marca = $_POST['marca'];
-    $endereco = $_POST['endereco'];
-    $contato = $_POST['contato'];
-    $potencia = $_POST['potencia'];
-    $combustivel = $_POST['combustivel'];
-    $cambio = $_POST['cambio'];
-    $quilometragem = $_POST['quilometragem'];
-
-    // Lida com o upload do arquivo
-    $target_dir = "uploads/";
-    $target_file = $target_dir . basename($_FILES["arquivo"]["name"]);
-    $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-    
-    // Verifica se o arquivo é uma imagem ou vídeo permitido
-    if (in_array($fileType, array('jpg', 'png', 'jpeg', 'gif', 'mp4', 'avi', 'mov'))) {
-        if (move_uploaded_file($_FILES["arquivo"]["tmp_name"], $target_file)) {
-            // Insere o carro com todos os novos dados
-            $stmt = $pdo->prepare("INSERT INTO carros (modelo, preco, ano, marca, contato, imagem, potencia, combustivel, cambio, quilometragem) 
-                                   VALUES (:modelo, :preco, :ano, :marca, :contato, :imagem, :potencia, :combustivel, :cambio, :quilometragem)");
-            $stmt->bindParam(':modelo', $modelo);
-            $stmt->bindParam(':preco', $preco);
-            $stmt->bindParam(':ano', $ano);
-            $stmt->bindParam(':marca', $marca);
-            $stmt->bindParam(':contato', $contato);
-            $stmt->bindParam(':imagem', $target_file);
-            $stmt->bindParam(':potencia', $potencia);
-            $stmt->bindParam(':combustivel', $combustivel);
-            $stmt->bindParam(':cambio', $cambio);
-            $stmt->bindParam(':quilometragem', $quilometragem);
-            $stmt->execute();
-            echo "<div class='alert alert-success' role='alert'>Carro cadastrado com sucesso!</div>";
-        } else {
-            echo "<div class='alert alert-danger' role='alert'>Erro ao fazer o upload do arquivo.</div>";
-        }
-    } else {
-        echo "<div class='alert alert-danger' role='alert'>Somente arquivos de imagem (jpg, png, gif) ou vídeo (mp4, avi) são permitidos.</div>";
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -98,7 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <!-- Formulário de Cadastro -->
     <div class="container mb-4">
         <h2 class="mb-4">Cadastro de Veículo</h2>
-        <form method="POST" enctype="multipart/form-data">
+        <?php if (isset($error)): ?>
+            <div class="alert alert-danger"><?php echo $error; ?></div>
+        <?php endif; ?>
+        <form method="POST" enctype="multipart/form-data" action="../controller/cadastrar_carro.php">
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="modelo" class="form-label">Modelo</label>

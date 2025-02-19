@@ -1,37 +1,3 @@
-<?php
-session_start();
-include('db.php');
-
-// Verifica se o usuário está logado e é admin
-if (!isset($_SESSION['user']) || $_SESSION['user'] !== 'admin') {
-    header("Location: login.php");
-    exit();
-}
-
-// Verifica se o PDO está definido (evita erros se a conexão falhar)
-if (!isset($pdo)) {
-    die("Erro na conexão com o banco de dados.");
-}
-
-// Se um carro foi selecionado para remoção
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['carro_id'])) {
-    $carro_id = filter_input(INPUT_POST, 'carro_id', FILTER_VALIDATE_INT);
-
-    if ($carro_id) {
-        $stmt = $pdo->prepare("DELETE FROM carros WHERE id = :id");
-        $stmt->bindParam(':id', $carro_id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        header("Location: remover.php?success=1");
-        exit();
-    }
-}
-
-// Busca todos os carros cadastrados
-$stmt = $pdo->query("SELECT id, modelo, marca, preco, ano FROM carros");
-$carros = $stmt->fetchAll();
-?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>

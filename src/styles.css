@@ -1,0 +1,165 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f4f9;
+}
+
+/* Garante que a página ocupe toda a altura disponível */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #1a1a1a;
+}
+
+.navbar-brand, .nav-link {
+    color: #ffffff !important;
+}
+
+.nav-link:hover {
+    color: #ff7043 !important;
+}
+
+/* Filtros responsivos */
+.filters {
+    margin-bottom: 30px;
+    margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+    .filters .row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Cartões de carros */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    height: auto;
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Botões */
+.btn-primary {
+    background-color: #ff7043;
+    border-color: #ff7043;
+}
+
+.btn-primary:hover {
+    background-color: #e64a19;
+    border-color: #e64a19;
+}
+
+/* Footer fixo no rodapé */
+.footer {
+    background-color: #1a1a1a;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    width: 100%;
+    margin-top: auto;
+}
+
+/* Responsividade */
+@media (max-width: 576px) {
+    .card {
+        max-width: 100%;
+    }
+}
+
+.informacoes-basicas {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    color: grey;
+    font-size: 9pt;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+section {
+    background: #fff;
+    margin: 20px auto;
+    padding: 20px;
+    width: 80%;
+    box-shadow: 0px 0px 10px #ccc;
+    border-radius: 8px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+th {
+    background-color: #007BFF;
+    color: white;
+}
+
+a {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+button {
+    background: #28a745;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #218838;
+}
