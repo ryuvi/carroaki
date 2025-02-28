@@ -1,14 +1,14 @@
 <!-- Filtro de Carros -->
-<div class="container filters my-5">
+<div class="container filters my-3">
     <form method="get">
         <div class="row">
             <!-- Filtro por Ano -->
-            <div class="col-md-4">
+            <div class="col-md-4 my-sm-0 my-2">
                 <input type="number" name="ano" class="form-control" placeholder="Ano" value="<?php echo htmlspecialchars($anoFiltro); ?>">
             </div>
 
             <!-- Filtro por Loja -->
-            <div class="col-md-4">
+            <div class="col-md-4 my-sm-0 my-2">
                 <input type="text" name="loja" class="form-control" placeholder="Loja" value="<?php echo htmlspecialchars($lojaFiltro); ?>">
             </div>
 

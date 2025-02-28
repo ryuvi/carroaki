@@ -8,12 +8,17 @@ class HomeController {
     // Método index, que será chamado para exibir a página inicial de carros
     public function index() {
         require 'models/Carro.php';
+        require 'controllers/AuthController.php';
         require 'config/database.php';
+        require 'models/Sponsor.php';
 
+        $auth = new AuthController();
         $carroModel = new Carro($pdo);
+        $sponsor_model = new Sponsor();
+        $sponsors = $sponsor_model->getSponsorList();
 
         // Verifica se o usuário está logado e se é admin
-        $isLoggedIn = isset($_SESSION['user']) && $_SESSION['user'] === 'admin';
+        // $isLoggedIn = $auth->getUsuarioLogado();
 
         // Obter parâmetros de filtro da URL
         $anoFiltro = isset($_GET['ano']) ? $_GET['ano'] : '';
@@ -23,12 +28,7 @@ class HomeController {
         $cars = $carroModel->listarCarros($anoFiltro, $lojaFiltro);
 
         // Incluir o cabeçalho e a navbar
-        require 'components/head.php';
-        renderHead('Carro Aki | Home');
-        require 'components/navbar.php';
-        require 'views/FormBuscaView.php';
-        require 'views/CarroListaView.php';
-        require 'components/footer.php';
+        require 'views/HomeView.php';
     }
 }
 

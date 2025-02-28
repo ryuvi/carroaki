@@ -1,25 +1,43 @@
 <?php
 class Router {
     // Array para armazenar as rotas registradas
-    private $routes;
+    private $routes = array();
+    private $groupPrefix = '';
 
     // Função para adicionar rotas
     function addRoute($path, $controllerAction) {
-        global $routes;
-        $routes[$path] = $controllerAction;
+        $fullPath = rtrim($this->groupPrefix . $path, '/');
+        if ($fullPath === '') {
+            $fullPath = '/';
+        }
+        $this->routes[$fullPath] = $controllerAction;
+    }
+
+    // Função para agrupar rotas com prefixo
+    function group($prefix, $callback) {
+        $previousPrefix = $this->groupPrefix;
+        $this->groupPrefix .= $prefix;
+
+        call_user_func($callback, $this);
+
+        $this->groupPrefix = $previousPrefix;
     }
 
     // Função para processar a URL e chamar o controller correto
     function dispatch() {
-        global $routes;
         require 'config/database.php';
 
         // Obtém a URL acessada (remove query strings)
         $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $normalizedUri = rtrim($requestUri, '/');
 
-        if (isset($routes[$requestUri])) {
+        if ($normalizedUri === '') {
+            $normalizedUri = '/';
+        }
+
+        if (isset($this->routes[$normalizedUri])) {
             // Divide "Controller@metodo"
-            list($controller, $method) = explode('@', $routes[$requestUri]);
+            list($controller, $method) = explode('@', $this->routes[$normalizedUri]);
 
             // Inclui o arquivo do controller
             $controllerFile = "controllers/" . $controller . ".php";
@@ -40,7 +58,7 @@ class Router {
             }
         } else {
             http_response_code(404);
-            echo "Erro 404 - Página não encontrada";
+            require 'views/404.php';
         }
     }
 }
