@@ -1,73 +1,86 @@
 <?php
-require_once 'models/Usuario.php';
-require_once 'models/Carro.php';
-require_once 'models/Loja.php';
-require_once 'models/Favorito.php';
+require 'models/Loja.php';
+require 'models/Carro.php';
+require 'models/Sponsor.php';
+require 'globals_const.php';
 
 class AdminController {
-    private $pdo;
-    private $usuarioModel;
-    private $carroModel;
-    private $lojaModel;
-    private $favoritoModel;
+    private $loja;
+    private $carro;
 
-    public function __construct($pdo) {
-        $this->pdo = $pdo;
-        $this->usuarioModel = new Usuario($pdo);
-        $this->carroModel = new Carro($pdo);
-        $this->lojaModel = new Loja($pdo);
-        $this->favoritoModel = new Favorito($pdo);
+    private function __constructor() {
     }
 
-    // Função para carregar o Dashboard
-    public function dashboard() {
-        // Listar usuários
-        $usuarios = $this->usuarioModel->obterTodos();
+    public function index() {
+        require 'components/head.php';
+        renderHead('Carro Aki | Admin');
 
-        // Passar dados para a View
-        include 'views/dashboard.php';
+        require 'views/Dashboards/DashboardIndex.php';
+        require 'components/footer.php';
     }
 
-    // Função para bloquear ou desbloquear um usuário
-    public function alterarStatusUsuario($usuario_id, $status) {
-        $this->usuarioModel->atualizarStatusPagamento($usuario_id, $status);
-        header('Location: /admin/dashboard');
+    public function carros() {
+        $carro = new Carro();
+        $carros = $carro->listarCarros();
+
+        require 'views/Dashboards/DashboardCarros.php';
     }
 
-    // Função para listar carros de um cliente
-    public function listarCarros($usuario_id) {
-        $carros = $this->carroModel->obterPorCliente($usuario_id);
-        include 'views/lista_carros.php'; // View que lista os carros
+    public function lojas() {
+        $loja = new Loja();
+        $lojas = $loja->listarLojas();
+
+        require 'views/Dashboards/DashboardLojas.php';
     }
 
-    // Função para excluir um carro
-    public function excluirCarro($carro_id) {
-        $this->carroModel->excluirCarro($carro_id);
-        header('Location: /admin/dashboard');
+    public function patrocinadores() {
+        $sponsor = new Sponsor();
+        $sponsors = $sponsor->getSponsorList();
+
+        require 'views/Dashboards/DashboardSponsors.php';
     }
 
-    // Função para atualizar o status do carro
-    public function alterarStatusCarro($carro_id, $status) {
-        $this->carroModel->atualizarStatus($carro_id, $status);
-        header('Location: /admin/dashboard');
+    public function adicionarPatrocinadores() {
+        require 'src/utils.php';
+        $sponsor = new Sponsor();
+        $utils = new Utility();
+        
+        $pastaDestino = UPLOADS_DIR . '/patrocinadores/';
+        $caminhoImagens = '';
+
+        if (!is_dir($pastaDestino)) {
+            mkdir($pastaDestino, 0777, true);
+        }
+
+        if (!empty($_FILES['imagens']['name'][0])) {
+            $nomeOriginal = $_FILES['imagens']['name'];
+            $tmpName = $_FILES['imagens']['tmp_name'];
+            $extensao = pathinfo($nomeOriginal, PATHINFO_EXTENSION);
+
+            $novoNome = uniqid().".".$extensao;
+            $caminhoCompleto = $pastaDestino.$novoNome;
+
+            if (move_uploaded_file($tmpName, $caminhoCompleto)) {
+                $caminhoImagens = $caminhoCompleto;
+            }
+        }
+
+        $patrocinador = array(
+            "id" => $utils->gerarUUID(),
+            "nome" => $_POST['nome'],
+            "link" => $_POST['link'],
+            "imagem" => $caminhoImagens
+        );
+        $sponsor->inserirPatrocinador($patrocinador);
+        header("Location: /admin/patrocinadores/");
     }
 
-    // Função para criar uma nova loja
-    public function criarLoja($nome, $cliente_id) {
-        $this->lojaModel->criar($nome, $cliente_id);
-        header('Location: /admin/dashboard');
-    }
-
-    // Função para marcar um carro como destaque na loja
-    public function destacarCarro($carro_id, $loja_id) {
-        $this->favoritoModel->marcarDestaque($carro_id, $loja_id);
-        header('Location: /admin/dashboard');
-    }
-
-    // Função para remover destaque de um carro
-    public function removerDestaque($carro_id, $loja_id) {
-        $this->favoritoModel->removerDestaque($carro_id, $loja_id);
-        header('Location: /admin/dashboard');
+    public function removerPatrocinadores() {
+        $sponsor = new Sponsor();
+        $id = $_GET['id'];
+        $sponsor->removerPatrocinador($id);
+        header('Location: /admin/patrocinadores');
     }
 }
+
 ?>
