@@ -6,7 +6,6 @@ require 'views/FormBuscaView.php';
 ?>
 
 <div class="container">
-
         <div class="row">
             <?php foreach ($cars as $car): ?>
                     <div class="col-lg-3 col-md-4 col-sm-6 col-12 d-flex justify-content-center my-2">
