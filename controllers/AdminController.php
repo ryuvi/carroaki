@@ -1,8 +1,8 @@
 <?php
-require 'models/Loja.php';
-require 'models/Carro.php';
-require 'models/Sponsor.php';
-require 'globals_const.php';
+require_once 'models/Loja.php';
+require_once 'models/Carro.php';
+require_once 'models/Sponsor.php';
+require_once 'globals_const.php';
 
 class AdminController {
     private $loja;
@@ -12,36 +12,38 @@ class AdminController {
     }
 
     public function index() {
-        require 'components/head.php';
+        require_once 'components/head.php';
         renderHead('Carro Aki | Admin');
 
-        require 'views/Dashboards/DashboardIndex.php';
-        require 'components/footer.php';
+        require_once 'views/Dashboards/DashboardIndex.php';
+        require_once 'components/footer.php';
     }
 
     public function carros() {
         $carro = new Carro();
         $carros = $carro->listarCarros();
 
-        require 'views/Dashboards/DashboardCarros.php';
+        require_once 'views/Dashboards/DashboardCarros.php';
     }
 
     public function lojas() {
         $loja = new Loja();
         $lojas = $loja->listarLojas();
 
-        require 'views/Dashboards/DashboardLojas.php';
+        require_once 'views/Dashboards/DashboardLojas.php';
     }
 
     public function patrocinadores() {
         $sponsor = new Sponsor();
+        require_once 'src/utils.php';
         $sponsors = $sponsor->getSponsorList();
+        $utils = new Utility();
 
-        require 'views/Dashboards/DashboardSponsors.php';
+        require_once 'views/Dashboards/DashboardSponsors.php';
     }
 
     public function adicionarPatrocinadores() {
-        require 'src/utils.php';
+        require_once 'src/utils.php';
         $sponsor = new Sponsor();
         $utils = new Utility();
         

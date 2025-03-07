@@ -1,14 +1,14 @@
 <div class="container mt-5">
     <h2>Login</h2>
-    <?php require 'components/error_success_message.php'; ?>
+    <?php require_once 'components/error_success_message.php'; ?>
     <form method="POST" action="/login">
         <div class="mb-3">
             <label for="username" class="form-label">Nome da Loja/Email</label>
-            <input type="text" class="form-control" id="username" name="username" placeholder="Nome da Loja/Email" required>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Nome da Loja/Email" require_onced>
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Senha</label>
-            <input type="password" class="form-control" id="password" name="password" required>
+            <input type="password" class="form-control" id="password" name="password" require_onced>
         </div>
         <div class="mb-3">
             <small>Não tem uma conta ainda? <a href="/register">Cadastre-se agora!</a></small>

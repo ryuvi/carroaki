@@ -1,25 +1,29 @@
 <?php
 
-require 'globals_const.php';
+require_once 'globals_const.php';
 
 class CarroController {
     public function index() {
-        require 'models/Carro.php';
+        require_once 'models/Carro.php';
+        require_once 'src/utils.php';
+        $utils = new Utility();
         $carro = new Carro();
 
         $carros = $carro->listarCarros('', $_SESSION['loja_id']);
 
-        require 'views/Dashboards/DashboardCarros.php';
+        require_once 'views/Dashboards/DashboardCarros.php';
         
     }
 
     public function exibirCarro() {
-        require 'models/Carro.php';
+        require_once 'models/Carro.php';
+        require_once 'src/utils.php';
+        $utils = new Utility();
         $carro = new Carro();
         $sCarro = $carro->getCarro($_GET['id']);
         $imagens = explode(',', $sCarro->imagens);
 
-        require 'views/carro/CarroIndex.php';
+        require_once 'views/carro/CarroIndex.php';
     }
 
     private function goBack() {
@@ -27,7 +31,7 @@ class CarroController {
     }
 
     public function deletarCarro() {
-        require 'models/Carro.php';
+        require_once 'models/Carro.php';
         $carro = new Carro();
         $carro->deletarCarro($_GET['id']);
         $this->goBack();
@@ -35,15 +39,15 @@ class CarroController {
 
 
     public function destacarCarro() {
-        require 'models/Carro.php';
+        require_once 'models/Carro.php';
         $carro = new Carro();
         $carro->destacarCarro($_GET['id']);
         $this->goBack();
     }
 
     public function inserirCarro() {
-        require 'models/Carro.php';
-        require 'src/utils.php';
+        require_once 'models/Carro.php';
+        require_once 'src/utils.php';
         $carro = new Carro();
         $utils = new Utility();
         $error = '';

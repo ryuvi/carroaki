@@ -1,7 +1,7 @@
 <?php
-require 'components/head.php';
+require_once 'components/head.php';
 renderHead('Carro Aki | Admin Usuarios');
-require 'components/navbar.php';
+require_once 'components/navbar.php';
 ?>
 <div class="container p-2">
     <h3>Gerenciador Patrocinadores</h3>
@@ -62,4 +62,4 @@ require 'components/navbar.php';
     </div>
 </div>
 
-<?php require 'components/footer.php'; ?>
+<?php require_once 'components/footer.php'; ?>

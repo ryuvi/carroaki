@@ -1,66 +1,89 @@
 <?php
 
-require 'models/Loja.php';
-require 'src/utils.php';
-require 'globals_const.php';
 
 class AuthController {
-    public function __construct(){}
+    private $session;
+    private $utility;
+    private $config;
+    private $loja;
+
+    public function __construct(){
+        require_once 'models/Loja.php';
+
+        require_once 'utils/session.php';
+        require_once 'utils/config.php';
+        require_once 'utils/utility.php';
+        
+        // $this->session = Session::getInstance();
+        $this->session = Session::getInstance();
+        $this->utility = Utility::getInstance();
+        $this->config = Config::getInstance();
+        $this->loja = new Loja();
+    }
+
+    private function redirectToHome() {
+        header('Location: /');
+        exit;
+    }
+
+    private function loginIndex() {
+        require_once 'components/head.php';
+        renderHead('Carro Aki | Login');
+        require_once 'components/navbar.php';
+
+        require_once 'views/usuario/LoginFormView.php';
+        require_once 'components/footer.php';
+    }
+    
+    private function registerIndex() {
+        require_once 'components/head.php';
+        renderHead('Carro Aki | Cadastrar');
+        require_once 'components/navbar.php';
+        
+        require_once 'views/usuario/RegisterFormView.php';
+        require_once 'components/footer.php';
+    }
 
     public function logout() {
-        unset($_SESSION['loja_id']);
-        unset($_SESSION['loja_nome']);
-        header('Location: /');
+        $this->session->destroy();
+        $this->redirectToHome();
     }
 
-    public function loginIndex($error = null) {
-        require 'components/head.php';
-        renderHead('Carro Aki | Login');
-        require 'components/navbar.php';
-        require 'views/usuario/LoginFormView.php';
-        require 'components/footer.php';
-    }
-
-    public function login() {
-        require 'config/database.php';
-
+    public function login() {        
         if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-            $loja = new Loja();
 
-            if ($loja->verificarLoja($_POST['username'], $_POST['password'])) {
+            if ($this->loja->verificarLoja($_POST['username'], $_POST['password'])) {
 
-                $_SESSION['loja_nome'] = $_POST['username'];
-                $_SESSION['loja_id'] = $loja->getLojaId($_POST['username'], $_POST['password']);
+                $loja_id = $this->loja->getLojaId($_POST['username'], $_POST['password']);
+                $loja_nome = '';
 
-                header('Location: /');
+                if (strpos($_POST['username'], '@') !== false) {
+                    $loja_nome = $this->loja->getLojaNome($loja_id);
+                } else {
+                    $loja_nome = $_POST['username'];
+                }
+
+                $this->session->set('loja_nome', $loja_nome);
+                $this->session->set('loja_id', $loja_id);
+
+                $this->redirectToHome();
             } else {
-                $error = "Sua loja está bloqueada!";
-                $this->loginIndex($error);
+                $this->session->set("tipo", "danger");
+                $this->session->set("mensagem", "Sua loja está bloqueada!");
+                $this->loginIndex();
             }
         } else {
             $this->loginIndex();
         }
     }
 
-    public function registerIndex($error = null) {
-        require 'components/head.php';
-            renderHead('Carro Aki | Cadastrar');
-            require 'components/navbar.php';
-            
-            require 'views/usuario/RegisterFormView.php';
-            require 'components/footer.php';
-    }
 
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {
-            require 'config/database.php';
+            if (!$this->loja->verificarLoja($_POST['username'], $_POST['password'])) {
 
-            $loja = new Loja();
-            $utils = new Utility();
-            if (!$loja->verificarLoja($_POST['username'], $_POST['password'])) {
-
-                $pastaDestino = UPLOADS_DIR . '/' . $_POST['username'] . '/';
+                $pastaDestino = $this->config->get('uploads_dir') . '/' . $_POST['username'] . '/';
                 $caminhoImagens = '';
 
                 if (!is_dir($pastaDestino)) {
@@ -79,30 +102,35 @@ class AuthController {
                         $caminhoImagens = $caminhoCompleto;
                     }
                 } else {
-                    $caminhoImagens = UPLOADS_DIR . "/default/banner.jpg";
+                    $caminhoImagens = $this->config->get('uploads_dir') . "/default/banner.jpg";
                 }
 
+                $uuid = $this->utility->gerarUUID();
                 $values = array(
-                    "id" => $utils->gerarUUID(),
+                    "id" => $uuid,
                     "nome" => $_POST['username'],
                     "email" => $_POST['email'],
                     "password" => md5($_POST['password']),
                     "banner" => $caminhoImagens,
-                    "descricao" => $_POST['descricao']
+                    "descricao" => $_POST['descricao'],
+                    "cidade" => $_POST['city']
                 );
 
-                $error = $loja->criarLoja($values);
+                $error = $this->loja->criarLoja($values);
                 if ($error !== '') {
-                    $this->registerIndex($error);
+                    $this->session->set('tipo', 'danger');
+                    $this->session->set('mensagem', $error);
+                    $this->registerIndex();
                 } else {
-                    $_SESSION['loja_nome'] = $_POST['username'];
-                    $_SESSION['loja_id'] = $loja->getLojaId($_POST['username'], $_POST['password']);
-                    header('Location: /');
+                    $this->session->set('loja_nome', $_POST['username']);
+                    $this->session->set('loja_id', $uuid);
+                    $this->redirectToHome();
                 }
 
             } else {
-                $error = "Loja já existe!";
-                $this->registerIndex($error);
+                $this->session->set('tipo', 'danger');
+                $this->session->set('mensagem', 'Loja já existe!');
+                $this->registerIndex();
             }
         } else {
             $this->registerIndex();

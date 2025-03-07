@@ -1,7 +1,7 @@
 <?php
-require 'components/head.php';
+require_once 'components/head.php';
 renderHead('Carro Aki | Carro');
-require 'components/navbar.php';
+require_once 'components/navbar.php';
 ?>
 
 
@@ -55,4 +55,4 @@ require 'components/navbar.php';
     </div>
 </div>
 
-<?php require 'components/footer.php' ?>
+<?php require_once 'components/footer.php' ?>

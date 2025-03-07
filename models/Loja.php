@@ -4,7 +4,7 @@ class Loja {
     private function __constructor() {}
 
     public function verificarLoja($username = '', $senha = '') {
-        require 'config/database.php';
+        require_once 'config/database.php';
 
         $sql = "SELECT * FROM lojas WHERE (nome = :nome OR email = :nome) AND senha = :senha";
 
@@ -26,8 +26,8 @@ class Loja {
     }
 
     public function getLojaId($username = '', $senha = '') {
-        require 'config/database.php';
-        $sql = "SELECT id FROM lojas WHERE nome = :nome AND senha = :senha";
+        require_once 'config/database.php';
+        $sql = "SELECT id FROM lojas WHERE (nome = :nome or email = :nome) AND senha = :senha";
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue("nome", $username);
         $stmt->bindValue("senha", md5($senha));
@@ -38,7 +38,7 @@ class Loja {
     }
 
     public function getLoja($loja_id = '') {
-        require 'config/database.php';
+        require_once 'config/database.php';
         $sql = "SELECT * FROM lojas WHERE id = :id;";
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue("id", $loja_id);
@@ -47,8 +47,8 @@ class Loja {
     }
 
     public function listarLojas($user_id = '') {
-        require 'config/database.php';
-        $sql = "SELECT l.id, l.nome, l.email, l.informacoes, l.ativo
+        require_once 'config/database.php';
+        $sql = "SELECT l.id, l.nome, l.email, l.informacoes, l.ativo, l.cidade
                   FROM lojas l";
 
         $stmt = $pdo->prepare($sql);
@@ -58,7 +58,7 @@ class Loja {
     }
 
     public function bloquearLoja($id = '') {
-        require 'config/database.php';
+        require_once 'config/database.php';
         $sql = "UPDATE lojas SET ativo = 0 WHERE id = :id;";
         try {
             $stmt = $pdo->prepare($sql);
@@ -73,7 +73,7 @@ class Loja {
     }
 
     public function desbloquearLoja($id = '') {
-        require 'config/database.php';
+        require_once 'config/database.php';
         $sql = "UPDATE lojas SET ativo = 1 WHERE id = :id;";
         try {
             $stmt = $pdo->prepare($sql);
@@ -88,7 +88,7 @@ class Loja {
     }
 
     public function getLojaNome($id = '') {
-        require 'config/database.php';
+        require_once 'config/database.php';
         $sql = "SELECT nome FROM lojas WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':id', $id);
@@ -98,13 +98,13 @@ class Loja {
     }
 
     public function criarLoja($values = array()) {
-        require 'config/database.php';
+        require_once 'config/database.php';
         $sql = "INSERT INTO lojas (
                     id, nome, email, senha,
-                    banner, informacoes
+                    banner, informacoes, cidade
                 ) VALUES (
                     :id, :nome, :email,
-                    :password, :banner, :descricao
+                    :password, :banner, :descricao, :cidade
                 )";
         
         try {
@@ -118,7 +118,7 @@ class Loja {
     }
 
     public function deletarLoja($id = '') {
-        require 'config/database.php';
+        require_once 'config/database.php';
         $sql = "DELETE FROM lojas WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute(array("id" => $id));

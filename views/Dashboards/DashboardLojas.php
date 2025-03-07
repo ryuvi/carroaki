@@ -1,12 +1,12 @@
 <?php
-require 'components/head.php';
+require_once 'components/head.php';
 renderHead('Carro Aki | Lojas');
-require 'components/navbar.php';
+require_once 'components/navbar.php';
 ?>
 
 <div class="container p-2">
 
-    <?php require 'components/error_success_message.php'; ?>
+    <?php require_once 'components/error_success_message.php'; ?>
 
     <table class="table table-striped border border-light">
         <thead>
@@ -58,4 +58,4 @@ require 'components/navbar.php';
 </div>
 
 
-<?php require 'components/footer.php'; ?>
+<?php require_once 'components/footer.php'; ?>

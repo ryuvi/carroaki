@@ -1,13 +1,15 @@
 <?php
-require 'components/head.php';
+
+require_once 'components/head.php';
 renderHead('Carro Aki | Loja');
-require 'components/navbar.php';
+require_once 'components/navbar.php';
+
 ?>
 
 <style>
     .jumbotron {
         text-align: center !important;
-        background-image: url('<?php echo '/'.$banner; ?>');
+        background-image: url('<?php echo $utils->startsWith('/', $banner) ? $banner : '/'.$banner; ?>');
         background-position: center center;
         background-repeat: no-repeat;
         background-size: cover;
@@ -21,6 +23,7 @@ require 'components/navbar.php';
 <div class="jumbotron">
     <h1 class="display-4"><?php echo $nome; ?></h1>
     <p class="lead"><?php echo $biografia; ?></p>
+    <p class="lead"><?php echo $cidade; ?></p>
 </div>
 
 <div class="container my-5">
@@ -33,7 +36,7 @@ require 'components/navbar.php';
                         <div class="carousel-inner">
                             <?php foreach(explode(',', $carro['imagens']) as $index => $image): ?>
                                 <div class="carousel-item <?php echo ($index === 0) ? 'active' : ''; ?>" style="height: 100%; width: 100%;">
-                                    <img src="/<?php echo $image; ?>" alt="Imagem do Carro" class="d-block w-100" style="object-fit: cover; height: 100%;">
+                                    <img src="<?php echo $utils->startsWith('/', $image) ? $image : '/'.$image; ?>" alt="Imagem do Carro" class="d-block w-100" style="object-fit: cover; height: 100%;">
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -68,4 +71,4 @@ require 'components/navbar.php';
 
 
 
-<?php require 'components/footer.php' ?>
+<?php require_once 'components/footer.php' ?>

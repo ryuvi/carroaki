@@ -1,10 +1,10 @@
 <?php
-require 'components/head.php';
+require_once 'components/head.php';
 renderHead('Carro Aki | Dashboard Carros');
-require 'components/navbar.php';
+require_once 'components/navbar.php';
 ?>
 <div class="container p-2">
-    <?php require 'components/error_success_message.php'; ?>
+    <?php require_once 'components/error_success_message.php'; ?>
     <div class="container"></div>
     <div class="container">
         <button type="button" data-bs-toggle="modal"  data-bs-target="#inserircarro" class="btn btn-primary mb-2 ml-0 d-flex">
@@ -120,4 +120,4 @@ require 'components/navbar.php';
         </div>
     </div>
 </div>
-<?php require 'components/footer.php'; ?>
+<?php require_once 'components/footer.php'; ?>

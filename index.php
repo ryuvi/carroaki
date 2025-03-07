@@ -1,9 +1,14 @@
 <?php
 
-session_start();
-require_once 'Router.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-$router = new Router();
+require_once 'utils/session.php';
+require_once 'utils/router.php';
+
+$session = Session::getInstance();
+$router = Router::getInstance();
 
 // Rotas da Página Inicial
 $router->addRoute("/", "HomeController@index");

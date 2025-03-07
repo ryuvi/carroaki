@@ -1,13 +1,19 @@
 <?php
 
 class Carro {
+    private $pdo;
+
+    public function __construct() {
+        require_once 'config/database.php';
+        $this->pdo = Database::getInstance()->getPDO();
+    }
+
     // Listar carros com filtros
     public function inserirCarro($values = array()) {
-        require 'config/database.php';
 
         if ($values["destaque"] != 0) {
             $sql = "UPDATE carros SET destaque = 0 WHERE loja_id = :loja_id;";
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->execute(array("loja_id" => $values["loja_id"]));
         }
 
@@ -22,19 +28,19 @@ class Carro {
             );";
 
         try {
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->execute($values);
             return '';
         } catch (PDOException $e) {
+            echo $e->getMessage();
             return $e->getMessage();
         }
     }
 
     public function deletarTodosCarros($id = '') {
-        require 'config/database.php';
         $sql = "DELETE FROM carros WHERE loja_id = :loja_id";
         try {
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->bindValue("loja_id", $id);
             $stmt->execute();
             $_SESSION['tipo'] = 'success';
@@ -49,32 +55,30 @@ class Carro {
     }
 
     public function getCarro($id = '') {
-        require 'config/database.php';
         $sql = "SELECT c.id, c.nome, c.preco, c.ano, c.descricao, c.imagens, c.destaque, c.loja_id, l.nome AS nome_loja
                   FROM carros c
                   JOIN lojas l ON l.id = c.loja_id
                  WHERE c.id = :id";
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue("id", $id);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
     public function destacarCarro($id = '') {
-        require 'config/database.php';
 
         try {
             $sql = "SELECT loja_id FROM carros WHERE id = :id;";
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->execute(array("id" => $id));
             $loja_id = $stmt->fetch(PDO::FETCH_OBJ);
             
             $sql = "UPDATE carros SET destaque=0 WHERE loja_id = :loja_id;";
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->execute(array("loja_id" => $loja_id->loja_id));
             
             $sql = "UPDATE carros SET destaque=1 WHERE id = :id;";
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->execute(array("id" => $id));
             $_SESSION['tipo'] = 'success';
             $_SESSION['mensagem'] = 'Carro destacado com sucesso!';
@@ -84,21 +88,23 @@ class Carro {
         }
     }
 
-    public function listarCarros($ano = '', $loja = '') {
-        require 'config/database.php';
+    public function listarCarros($ano = '', $loja = '', $cidade = '') {
 
-        $sql = "SELECT c.id, c.nome, c.preco, c.ano, c.descricao, c.imagens, c.destaque, c.loja_id, l.nome AS nome_loja
+        $sql = "SELECT c.id, c.nome, c.preco, c.ano, c.descricao, c.imagens, c.destaque, c.loja_id, l.nome AS nome_loja, l.cidade as cidade
                   FROM carros c
                   JOIN lojas l ON l.id = c.loja_id
                  WHERE 1=1";
 
         // Adiciona filtros dinamicamente
-        if ($ano || $loja){
+        if ($ano || $loja || $cidade){
             if ($ano) {
                 $sql .= " AND c.ano = :ano";
             }
             if ($loja) {
                 $sql .= " AND (l.nome = :loja_id OR l.id = :loja_id)";
+            }
+            if ($cidade) {
+                $sql .= " AND l.cidade = :cidade";
             }
         } else {
             $sql .= " AND c.destaque = 1;";
@@ -108,7 +114,7 @@ class Carro {
 
 
         try {
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
 
             // Bind dos parâmetros
             if ($ano) {
@@ -116,6 +122,9 @@ class Carro {
             }
             if ($loja) {
                 $stmt->bindValue(':loja_id', $loja);
+            }
+            if ($cidade) {
+                $stmt->bindValue(':cidade', $cidade);
             }
 
             $stmt->execute();
@@ -128,10 +137,9 @@ class Carro {
     }
 
     public function deletarCarro($id) {
-        require 'config/database.php';
 
         $sql = "SELECT imagens FROM carros WHERE id = :id";
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(':id', $id);
         $stmt->execute();
         $imagens = $stmt->fetch(PDO::FETCH_OBJ);
@@ -143,7 +151,7 @@ class Carro {
         $sql = "DELETE FROM carros WHERE id = :id";
 
         try {
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->bindValue(':id', $id);
             $stmt->execute();
             $_SESSION['tipo'] = 'success';

@@ -1,11 +1,27 @@
 <?php
+
 class Router {
     // Array para armazenar as rotas registradas
     private $routes = array();
     private $groupPrefix = '';
+    
+    // Instância estática para implementar o Singleton
+    private static $instance = null;
+
+    // Construtor privado para evitar criação de instâncias fora da classe
+    private function __construct() {}
+
+    // Método para acessar a instância única da classe
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new Router(); // Cria a instância se não existir
+        }
+
+        return self::$instance; // Retorna a instância única
+    }
 
     // Função para adicionar rotas
-    function addRoute($path, $controllerAction) {
+    public function addRoute($path, $controllerAction) {
         $fullPath = rtrim($this->groupPrefix . $path, '/');
         if ($fullPath === '') {
             $fullPath = '/';
@@ -14,7 +30,7 @@ class Router {
     }
 
     // Função para agrupar rotas com prefixo
-    function group($prefix, $callback) {
+    public function group($prefix, $callback) {
         $previousPrefix = $this->groupPrefix;
         $this->groupPrefix .= $prefix;
 
@@ -24,8 +40,7 @@ class Router {
     }
 
     // Função para processar a URL e chamar o controller correto
-    function dispatch() {
-        require 'config/database.php';
+    public function dispatch() {
 
         // Obtém a URL acessada (remove query strings)
         $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -58,9 +73,15 @@ class Router {
             }
         } else {
             http_response_code(404);
-            require 'views/404.php';
+            require_once 'views/404.php';
         }
     }
+
+    // Impede a clonagem da instância
+    private function __clone() {}
+
+    // Impede a desserialização da instância
+    public function __wakeup() {}
 }
 
 ?>
